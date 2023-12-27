@@ -16,7 +16,7 @@ A API do servidor só aceita requisições do domínio rest.faustinopsy.com.
 
 ### Fluxo do REST
 
-![Fluxo do REST](img/restsimples.txt)
+![Fluxo do REST](img/restv1.svg)
 
 ## Diagramas
 
