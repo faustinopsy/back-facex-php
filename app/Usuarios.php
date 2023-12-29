@@ -3,13 +3,15 @@
 namespace App;
 require "../vendor/autoload.php";
 
-header("Access-Control-Allow-Origin: *"); 
+$allowedOrigins = ['https://rest.faustinopsy.com', 'http://rest.faustinopsy.com'];
+if (in_array($_SERVER['HTTP_ORIGIN'], $allowedOrigins)) {
+    header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
+} 
 header("Access-Control-Allow-Methods: GET, POST, DELETE, PUT, OPTIONS"); 
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"); 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
-
 
 use App\Database\Conexao;
 use App\Model\Users;
