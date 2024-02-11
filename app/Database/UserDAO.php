@@ -4,7 +4,7 @@ namespace App\Database;
 use PDO;
 use PDOException;
 
-class UsuarioDAO {
+class UserDAO {
     private $conexao;
     public function __construct(PDO $conexao) {
         $this->conexao = $conexao;

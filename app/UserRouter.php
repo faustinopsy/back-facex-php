@@ -12,13 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 use App\Database\Conexao;
-use App\Database\UsuarioDAO;
+use App\Database\UserDAO;
 use App\Model\User;
 use App\Controller\UserController;
 
 $conexao = Conexao::getConexao();
-$usuarioDAO = new UsuarioDAO($conexao);
-$userController = new UserController($usuarioDAO);
+$userDAO = new UserDAO($conexao);
+$userController = new UserController($userDAO);
 
 $body = json_decode(file_get_contents('php://input'), true);
 

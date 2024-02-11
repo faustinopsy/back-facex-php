@@ -1,27 +1,27 @@
 <?php
 namespace App\Controller;
 
-use App\Database\UsuarioDAO;
+use App\Database\UserDAO;
 use App\Model\User;
 use PDOException;
 
 class UserController {
-    private $usuarioDAO;
+    private $userDAO;
 
-    public function __construct(UsuarioDAO $usuarioDAO) {
-        $this->usuarioDAO = $usuarioDAO;
+    public function __construct(UserDAO $userDAO) {
+        $this->userDAO = $userDAO;
     }
 
     public function inserir(User $user) {
         try {
-            $usuarioExistente = $this->usuarioDAO->buscarUsuarioPorNome($user->getNome());
+            $usuarioExistente = $this->userDAO->buscarUsuarioPorNome($user->getNome());
             if ($usuarioExistente) {
                 return ['status' => false, 'message' => 'Nome de usuário já existe'];
             }
-            $userId = $this->usuarioDAO->inserirUsuario($user->getNome(), $user->getRegistro());
+            $userId = $this->userDAO->inserirUsuario($user->getNome(), $user->getRegistro());
             foreach ($user->getRostos() as $rosto) {
                 $rostoJson = json_encode($rosto);
-                $this->usuarioDAO->inserirRosto($userId, $rostoJson);
+                $this->userDAO->inserirRosto($userId, $rostoJson);
             }
             return ['status' => true, 'id' => $userId];
         } catch (PDOException $e) {
@@ -32,9 +32,9 @@ class UserController {
     public function buscarTodos() {
         try {
             $usuariosComRosto = []; 
-            $usuarios = $this->usuarioDAO->buscarTodosUsuarios();
+            $usuarios = $this->userDAO->buscarTodosUsuarios();
             foreach ($usuarios as $usuario) {
-                $rostos = $this->usuarioDAO->buscarRostosPorUsuario($usuario['id']);
+                $rostos = $this->userDAO->buscarRostosPorUsuario($usuario['id']);
                 if (!empty($rostos)) { 
                     $usuario['rostos'] = $rostos; 
                     $usuariosComRosto[] = $usuario; 
@@ -50,9 +50,9 @@ class UserController {
 
     public function buscarPorId($id) {
         try {
-            $usuario = $this->usuarioDAO->buscarUsuarioPorId($id);
+            $usuario = $this->userDAO->buscarUsuarioPorId($id);
             if ($usuario) {
-                $usuario['rosto'] = $this->usuarioDAO->buscarRostosPorUsuario($usuario['id']);
+                $usuario['rosto'] = $this->userDAO->buscarRostosPorUsuario($usuario['id']);
                 return ['status' => true, 'usuario' => $usuario];
             }
             return ['status' => false, 'message' => 'Usuário não encontrado'];
@@ -63,7 +63,7 @@ class UserController {
 
     public function atualizar(User $user) {
         try {
-            $this->usuarioDAO->atualizarUsuario($user->getId(), $user->getNome(), $user->getRegistro());
+            $this->userDAO->atualizarUsuario($user->getId(), $user->getNome(), $user->getRegistro());
             return ['status' => true, 'message' => 'Usuário atualizado com sucesso'];
         } catch (PDOException $e) {
             return ['status' => false, 'error' => $e->getMessage()];
@@ -72,7 +72,7 @@ class UserController {
 
     public function excluir($id) {
         try {
-            $this->usuarioDAO->excluirUsuario($id);
+            $this->userDAO->excluirUsuario($id);
             return ['status' => true, 'message' => 'Usuário excluído com sucesso'];
         } catch (PDOException $e) {
             return ['status' => false, 'error' => $e->getMessage()];
@@ -80,11 +80,11 @@ class UserController {
     }
     public function registrar(User $user) {
         try {
-            $usuarioExistente = $this->usuarioDAO->buscarUsuarioPorEmail($user->getEmail());
+            $usuarioExistente = $this->userDAO->buscarUsuarioPorEmail($user->getEmail());
             if ($usuarioExistente) {
                 return ['status' => false, 'message' => 'E-mail já cadastrado'];
             }
-            $userId = $this->usuarioDAO->inserirUsuarioCompleto($user);
+            $userId = $this->userDAO->inserirUsuarioCompleto($user);
             return ['status' => true, 'id' => $userId];
         } catch (PDOException $e) {
             return ['status' => false, 'error' => $e->getMessage()];
@@ -93,7 +93,7 @@ class UserController {
 
     public function login(User $user) { 
         try {
-            $usuario = $this->usuarioDAO->buscarUsuarioPorEmail($user->getEmail());
+            $usuario = $this->userDAO->buscarUsuarioPorEmail($user->getEmail());
             if ($usuario && password_verify($user->getSenha(), $usuario['senha'])) {
                 unset($usuario['senha']); // Remove a senha por segurança
                 return ['status' => true, 'usuario' => $usuario];
